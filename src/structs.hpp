@@ -35,20 +35,23 @@ struct Point {
     this->y = other.y;
   }
 
-  friend bool operator== (const Point &a, const Point &b) {
+  friend bool operator == (const Point &a, const Point &b) {
     return a.x == b.x && a.y == b.y;
   }
-  friend bool operator!= (const Point &a, const Point &b) {
+  friend bool operator != (const Point &a, const Point &b) {
     return a.x != b.x || a.y != b.y;
   }
 };
 
 namespace std {
-template <> struct hash<Point> {
+
+template <>
+struct hash<Point> {
   auto operator()(const Point &value) const -> size_t {
     return hash<std::string>()(string_format("%d,%d", value.x, value.y));
   }
 };
+
 } // namespace std
 
 template<typename T>
@@ -71,9 +74,6 @@ struct Array2D {
     delete[] data;
   }
 
-  T &at(int x, int y) {
-    return data[y][x];
-  }
   T &at(Point pos) {
     return data[pos.y][pos.x];
   }

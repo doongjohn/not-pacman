@@ -1,8 +1,9 @@
 #pragma once
 
-#include <functional>
-#include <iostream>
 #include <memory.h>
+#include <iostream>
+#include <vector>
+#include <functional>
 
 #include "structs.hpp"
 
@@ -33,7 +34,7 @@ public:
 
   auto for_each(std::function<void(Point)> func) -> void {
     for (int y = 0; y < height; ++y) {
-      for (int x = 0; x < height; ++x) {
+      for (int x = 0; x < width; ++x) {
         func({x, y});
       }
     }

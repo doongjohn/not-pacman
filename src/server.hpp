@@ -24,11 +24,6 @@ auto start_http_server() -> void {
     // res.set_content(json_dijkstra_result.dump(), "application/json");
   });
 
-  svr.Post("/set_map_json", [&](const Request &req, Response &res) {
-    // data.json_map_data = json::parse(req.body);
-    // data.update_all_data();
-  });
-
   std::cout << "starting local http server -> http://localhost:3000\n";
   svr.listen("localhost", 3000);
 }

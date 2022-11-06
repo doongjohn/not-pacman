@@ -1,9 +1,9 @@
-#include <httplib.h>
 #include <iostream>
 #include <string>
 
 #include "map.hpp"
 #include "pathfinder.hpp"
+#include "server.hpp"
 
 // TODO: create websocket server
 // TODO: create web frontend
@@ -12,7 +12,7 @@
 // - [ ] character collision
 
 auto main() -> int {
-  std::vector<std::string> m = {
+  std::vector<std::string> map_str = {
     "■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
     "■            ■■            ■",
     "■ ■■■■ ■■■■■ ■■ ■■■■■ ■■■■ ■",
@@ -50,17 +50,19 @@ auto main() -> int {
   map.for_each([&](Point pos) {
     int x = pos.x;
     int y = pos.y;
-    switch (m[y][x]) {
+    switch (map_str[y][x]) {
       break; case '■': // wall
         map.set_type({x, y}, 1);
         map.set_walkable({x, y}, false);
 
       break; case '.': // score
+        map.set_type({x, y}, 2);
 
       break; case '*': // powerup
+        map.set_type({x, y}, 3);
 
-      break; default:
-        std::cout << "Unknown tile type!\n";
+      break; default: // empty
+        map.set_type({x, y}, 0);
     }
   });
 
