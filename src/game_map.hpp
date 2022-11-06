@@ -7,7 +7,7 @@
 
 #include "structs.hpp"
 
-class Map {
+class GameMap {
 public:
   const int width;
   const int height;
@@ -15,7 +15,7 @@ public:
   std::vector<std::vector<int>> extra_cost;
   std::vector<std::vector<bool>> walkable;
 
-  Map(int width, int height) : width(width), height(height) {
+  GameMap(int width, int height) : width(width), height(height) {
     type.resize(height);
     extra_cost.resize(height);
     walkable.resize(height);
@@ -30,7 +30,7 @@ public:
       }
     }
   }
-  ~Map() {}
+  ~GameMap() {}
 
   auto for_each(std::function<void(Point)> func) -> void {
     for (int y = 0; y < height; ++y) {

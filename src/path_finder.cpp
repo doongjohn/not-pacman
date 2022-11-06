@@ -1,4 +1,4 @@
-#include "pathfinder.hpp"
+#include "path_finder.hpp"
 
 auto PathFinder::is_in_bounds(Point pos) -> bool {
   return pos.x >= 0 && pos.y >= 0 && pos.x < game_map.width && pos.y < game_map.height;

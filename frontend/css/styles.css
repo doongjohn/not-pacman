@@ -1,110 +1,29 @@
 html,
 body {
   font-family: 'JetBrains Mono', monospace;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.box {
   overflow: hidden;
-  display: flex;
-  flex-flow: column;
-  width: 100%;
-  height: 100%;
-}
-
-.box .row.header {
-  flex: 0 1 auto;
-  height: min-content;
-}
-
-.box .row.content {
-  flex: 1 1 auto;
-  height: 100%;
-}
-
-canvas {
-  display: block;
   padding: 0;
   margin: 0;
   width: 100%;
   height: 100%;
 }
 
-.navbar {
+#canvas-container {
   overflow: hidden;
-  background-color: rgb(247, 247, 247);
-  box-shadow: 0px 1px 16px 0px rgba(0, 0, 0, 0.2);
-}
-
-.navbar a {
-  float: left;
-  font-size: 16px;
-  color: rgb(0, 0, 0);
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-
-  cursor: pointer;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.dropdown {
-  float: left;
-  overflow: hidden;
-}
-
-.dropdown .dropbtn {
-  font-size: 16px;
-  border: none;
-  outline: none;
-  color: rgb(0, 0, 0);
-  padding: 14px 16px;
-  background-color: inherit;
-  font-family: inherit;
+  padding: 0;
   margin: 0;
-
-  cursor: pointer;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  width: 100%;
+  height: 100%;
 }
 
-.navbar a:hover,
-.dropdown:hover .dropbtn {
-  background-color: rgb(231, 231, 231);
-}
-
-.dropdown-content {
-  display: none;
+canvas {
+  image-rendering: pixelated;
   position: absolute;
-  background-color: rgb(247, 247, 247);
-  min-width: 160px;
-  box-shadow: 0px 1px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-
-  cursor: pointer;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.dropdown-content a {
-  float: none;
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
   display: block;
-  text-align: left;
-}
-
-.dropdown-content a:hover {
-  background-color: rgb(231, 231, 231);
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
+  padding: 0;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }

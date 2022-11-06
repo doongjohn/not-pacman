@@ -7,19 +7,19 @@
 #include <unordered_set>
 #include <functional>
 
-#include "map.hpp"
+#include "game_map.hpp"
 #include "structs.hpp"
 
 class PathFinder {
 private:
-  Map &game_map;
+  GameMap &game_map;
 
 public:
   constexpr static const int straight_path_cost = 10;
   constexpr static const int diagonal_path_cost = 14;
 
   ~PathFinder() {}
-  PathFinder(Map &map) : game_map(map) {}
+  PathFinder(GameMap &map) : game_map(map) {}
 
   auto is_in_bounds(Point pos) -> bool;
   auto get_neighbors(Point pos) -> Neighbors;

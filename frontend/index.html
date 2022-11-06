@@ -11,33 +11,15 @@
 </head>
 
 <body oncontextmenu="return false;">
-  <div class="box">
-    <div class="row header">
-      <div class="navbar">
-        <a id="btn-reset">🗑️ Reset</a>
-        <a id="btn-findpath">🐾 Find path</a>
-        <div class="dropdown">
-          <button class="dropbtn">🖌️ Paint objects</button>
-          <div class="dropdown-content">
-            <a id="btn-starting">🤖 Starting point</a>
-            <a id="btn-destination">🚩 Destination point</a>
-            <a id="btn-wall">🧱 Wall</a>
-            <a id="btn-grass">🌱 Grass (+20 cost)</a>
-            <a id="btn-water">🌊 Water (+50 cost)</a>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div id="canvas-container">
+    <canvas id="canvas"></canvas>
+  </div>
 
-    <div class="row content" id="canvas-container">
-      <canvas id="canvas"></canvas>
-    </div>
-
-    <script src="js/init.js"></script>
-    <script src="js/grid.js"></script>
-    <script src="js/buttons.js"></script>
-    <script src="js/paint.js"></script>
-    <script src="js/main.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/grid.js"></script>
+  <script src="js/init.js"></script>
+  <script src="js/main.js"></script>
 </body>
 
 </html>

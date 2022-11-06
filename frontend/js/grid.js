@@ -8,10 +8,10 @@ class Grid {
       tileHeight = 40,
       gap = 2,
       tileColor = (x, y, tile) => {
-        return '#e8e8e8'
+        return '#000000'
       },
-      tileText = (x, y, tile) => {
-        return ''
+      tileImage = (x, y, tile) => {
+        return null
       },
     } = {}
   ) {
@@ -21,7 +21,7 @@ class Grid {
     this.tileHeight = tileHeight
     this.gap = gap
     this.tileColor = tileColor
-    this.tileText = tileText
+    this.tileImage = tileImage
     // init 2d array
     this.data = new Array(height)
     for (let y = 0; y < height; ++y) {
@@ -91,8 +91,8 @@ class Grid {
     this.bound_check(x, y)
     const center = this.centerTopLeft()
     return {
-      x: center.x + x * this.tileWidth,
-      y: center.y + y * this.tileHeight,
+      x: center.x + x * this.tileWidth + this.tileWidth / 2,
+      y: center.y + y * this.tileHeight + this.tileHeight / 2,
     }
   }
 
@@ -107,69 +107,45 @@ class Grid {
         this.tileWidth - this.gap,
         this.tileHeight - this.gap
       )
-      // draw text
-      ctx.fillStyle = '#ffffff'
-      ctx.font = '30px Arial';
-      ctx.textAlign = 'center'
-      ctx.fillText(
-        this.tileText(x, y, this.data[y][x]),
-        center.x + x * this.tileWidth + 18,
-        center.y + y * this.tileHeight + 28,
-      )
+      const img = this.tileImage(x, y, this.data[y][x])
+      if (img) {
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          16,
+          16,
+          center.x + x * this.tileWidth,
+          center.y + y * this.tileHeight,
+          this.tileWidth,
+          this.tileHeight
+        )
+      }
     })
   }
 }
 
-let grid = null
-let path = null
-
-const initPath = (width, height) => {
-  path = new Grid(width, height, false, {
-    gap: 4,
-    tileColor: (...[, , ]) => {
-      return 'rgba(0, 0, 0, 0.0)' // transparent
-    },
-    tileText: (...[, , tile]) => {
-      switch (tile) {
-        case true:
-          return '🐾'
-        default:
-          return ''
-      }
-    },
+function createBackgroundGrid(width, height) {
+  return new Grid(width, height, '', {
+    tileWidth: 30,
+    tileHeight: 30,
+    gap: 0,
   })
 }
 
-const initGrid = (width, height) => {
-  grid = new Grid(width, height, '', {
-    gap: 4,
+function createGrid(width, height, tileImage) {
+  return new Grid(width, height, '', {
+    tileWidth: 30,
+    tileHeight: 30,
+    gap: 0,
     tileColor: (...[, , tile]) => {
       switch (tile) {
-        case 'grass':
-          return '#86d72f'
-        case 'water':
-          return '#00a6ed'
-        default:
-          return '#e8e8e8'
-      }
-    },
-    tileText: (...[, , tile]) => {
-      switch (tile) {
-        case '':
-          return ''
-        case 'starting':
-          return '🤖'
-        case 'destination':
-          return '🚩'
         case 'wall':
-          return '🧱'
-        case 'grass':
-          return ''
-        case 'water':
-          return ''
+          return '#4287f5'
         default:
-          return '?'
+          return '#000000'
       }
     },
+    tileImage: tileImage,
   })
 }
