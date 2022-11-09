@@ -41,8 +41,8 @@ function getPath(self, dest, signal = null) {
     '/get-path-json',
     {
       start: {
-        x: self.gridPos.x,
-        y: self.gridPos.y,
+        x: self.pos.x,
+        y: self.pos.y,
       },
       dest: dest,
     },
@@ -68,11 +68,9 @@ function getPath(self, dest, signal = null) {
 function sortByDist(self) {
   return function(a, b) {
     const distA =
-      (player.gridPos.x - (self.gridPos.x + a.x)) ** 2 +
-      (player.gridPos.y - (self.gridPos.y + a.y)) ** 2
+      (player.pos.x - (self.pos.x + a.x)) ** 2 + (player.pos.y - (self.pos.y + a.y)) ** 2
     const distB =
-      (player.gridPos.x - (self.gridPos.x + b.x)) ** 2 +
-      (player.gridPos.y - (self.gridPos.y + b.y)) ** 2
+      (player.pos.x - (self.pos.x + b.x)) ** 2 + (player.pos.y - (self.pos.y + b.y)) ** 2
     if (distA > distB) {
       return -1
     }
@@ -98,13 +96,13 @@ stateFollow.onUpdate = (self) => {
   const needUpdate =
     self.path === null ||
     self.path.length == 0 ||
-    self.path[self.path.length - 1].x != player.gridPos.x ||
-    self.path[self.path.length - 1].y != player.gridPos.y
+    self.path[self.path.length - 1].x != player.pos.x ||
+    self.path[self.path.length - 1].y != player.pos.y
 
-  const overlapPlayer = self.gridPos.x == player.gridPos.x && self.gridPos.y == player.gridPos.y
+  const overlapPlayer = self.pos.x == player.pos.x && self.pos.y == player.pos.y
 
   if (needUpdate && !overlapPlayer) {
-    getPath(self, player.gridPos, self.controller.signal)
+    getPath(self, player.pos, self.controller.signal)
   }
 
   self.followPath(self.followSpeed)
@@ -124,7 +122,7 @@ stateInBox.onEnter = (self) => {
   self.moveDir.y = Math.round(randomRange(0, 1)) == 0 ? 1 : -1
 }
 stateInBox.onUpdate = (self) => {
-  if (self.gridPos.x == self.nextPos.x && self.gridPos.y == self.nextPos.y) {
+  if (self.pos.x == self.nextPos.x && self.pos.y == self.nextPos.y) {
     self.moveDir.y *= -1
   }
   self.move(self.inBoxSpeed)
@@ -152,7 +150,7 @@ stateScared.onEnter = (self) => {
     { x: 0, y: -1 },
   ]
     .filter((value) => {
-      if (!self.canMove(self.gridPos, value)) {
+      if (!self.canMove(self.pos, value)) {
         return false
       }
       return true
@@ -168,7 +166,7 @@ stateScared.onUpdate = (self) => {
       { x: 0, y: -1 },
     ]
       .filter((value) => {
-        if (!self.canMove(self.gridPos, value)) {
+        if (!self.canMove(self.pos, value)) {
           return false
         }
         if (self.moveDir.x != 0) {

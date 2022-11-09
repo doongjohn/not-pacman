@@ -7,7 +7,7 @@ class Ghost {
       x: startX,
       y: startY,
     }
-    this.gridPos = {
+    this.pos = {
       x: startX,
       y: startY,
     }
@@ -58,7 +58,7 @@ class Ghost {
   }
 
   isMoveDone() {
-    return this.gridPos.x == this.nextPos.x && this.gridPos.y == this.nextPos.y
+    return this.pos.x == this.nextPos.x && this.pos.y == this.nextPos.y
   }
 
   canMove(pos, dir) {
@@ -69,9 +69,9 @@ class Ghost {
 
   move(speed) {
     // check wall for input direction
-    if (this.canMove(this.gridPos, this.moveDir)) {
-      this.nextPos.x = this.gridPos.x + this.moveDir.x
-      this.nextPos.y = this.gridPos.y + this.moveDir.y
+    if (this.canMove(this.pos, this.moveDir)) {
+      this.nextPos.x = this.pos.x + this.moveDir.x
+      this.nextPos.y = this.pos.y + this.moveDir.y
     }
 
     // move
@@ -80,8 +80,8 @@ class Ghost {
     this.y = moveTowards(this.y, nextCanvasPos.y, speed * deltaTime)
 
     // update position
-    this.x == nextCanvasPos.x && (this.gridPos.x = this.nextPos.x)
-    this.y == nextCanvasPos.y && (this.gridPos.y = this.nextPos.y)
+    this.x == nextCanvasPos.x && (this.pos.x = this.nextPos.x)
+    this.y == nextCanvasPos.y && (this.pos.y = this.nextPos.y)
   }
 
   followPath(speed) {
@@ -102,8 +102,8 @@ class Ghost {
     this.y = moveTowards(this.y, nextCanvasPos.y, speed * deltaTime)
 
     // update position
-    this.x == nextCanvasPos.x && (this.gridPos.x = this.nextPos.x)
-    this.y == nextCanvasPos.y && (this.gridPos.y = this.nextPos.y)
+    this.x == nextCanvasPos.x && (this.pos.x = this.nextPos.x)
+    this.y == nextCanvasPos.y && (this.pos.y = this.nextPos.y)
 
     if (this.x == nextCanvasPos.x && this.y == nextCanvasPos.y) {
       this.path.splice(0, 1)

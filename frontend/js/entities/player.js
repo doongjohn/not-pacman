@@ -1,7 +1,7 @@
 const player = {
   init(startX, startY) {
     // grid position
-    this.gridPos = {
+    this.pos = {
       x: startX,
       y: startY,
     }
@@ -54,7 +54,7 @@ const player = {
   },
 
   getTile() {
-    return grid.at(this.gridPos.x, this.gridPos.y)
+    return grid.at(this.pos.x, this.pos.y)
   },
 
   canMove(pos, dir) {
@@ -66,11 +66,11 @@ const player = {
   move() {
     if (this.getTile() == 'score') {
       score += 1
-      grid.set(this.gridPos.x, this.gridPos.y, '')
+      grid.set(this.pos.x, this.pos.y, '')
     }
     if (this.getTile() == 'powerup') {
       score += 1
-      grid.set(this.gridPos.x, this.gridPos.y, '')
+      grid.set(this.pos.x, this.pos.y, '')
       // trigger event
       this.event.dispatchEvent(this.eventPowerUp)
     }
@@ -81,9 +81,9 @@ const player = {
     }
 
     // check wall for movement direction
-    if (this.canMove(this.gridPos, this.moveDir)) {
-      this.nextPos.x = this.gridPos.x + this.moveDir.x
-      this.nextPos.y = this.gridPos.y - this.moveDir.y
+    if (this.canMove(this.pos, this.moveDir)) {
+      this.nextPos.x = this.pos.x + this.moveDir.x
+      this.nextPos.y = this.pos.y - this.moveDir.y
     } else {
       this.moveDir.x = 0
       this.moveDir.y = 0
@@ -95,8 +95,8 @@ const player = {
     this.y = moveTowards(this.y, nextCanvasPos.y, this.speed * deltaTime)
 
     // update position
-    this.x == nextCanvasPos.x && (this.gridPos.x = this.nextPos.x)
-    this.y == nextCanvasPos.y && (this.gridPos.y = this.nextPos.y)
+    this.x == nextCanvasPos.x && (this.pos.x = this.nextPos.x)
+    this.y == nextCanvasPos.y && (this.pos.y = this.nextPos.y)
   },
 
   draw() {

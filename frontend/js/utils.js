@@ -1,14 +1,10 @@
 async function postData(url = '', data = {}, signal = null) {
   const response = await fetch(url, {
     method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
     },
     redirect: 'follow',
-    referrerPolicy: 'no-referrer',
     signal: signal,
     body: JSON.stringify(data),
   })
@@ -18,14 +14,10 @@ async function postData(url = '', data = {}, signal = null) {
 async function getData(url = '', signal = null) {
   const response = await fetch(url, {
     method: 'GET',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
     },
     redirect: 'follow',
-    referrerPolicy: 'no-referrer',
     signal: signal,
   })
   return response
