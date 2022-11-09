@@ -5,6 +5,8 @@
 #include <string>
 #include <functional>
 
+#include <nlohmann/json.hpp>
+
 // source: https://stackoverflow.com/a/26221725
 template <typename... Args>
 std::string string_format(const std::string &format, Args... args) {
@@ -53,6 +55,14 @@ struct hash<Point> {
 };
 
 } // namespace std
+
+static void to_json(nlohmann::json &j, const Point &value) {
+  j = nlohmann::json{{"x", value.x}, {"y", value.y}};
+}
+static void from_json(const nlohmann::json &j, Point &value) {
+  j.at("x").get_to(value.x);
+  j.at("y").get_to(value.y);
+}
 
 template<typename T>
 struct Array2D {

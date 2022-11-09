@@ -6,8 +6,10 @@ let grid = null
 let deltaTime = 0
 let startTime = 0
 
-let score = 0
+let gameTimer = 0
 let totalScore = 0
+let score = 0
+let playerDead = false
 
 class ImageLoader {
   constructor(sources) {
@@ -30,19 +32,20 @@ class ImageLoader {
 
 function load() {
   // fetch initial map data
-  getData('/get_map_json')
+  getData('/get-map-json')
     .then((response) => response.json())
     .then((json) => {
       jsonMapData = json
     })
-    .catch(function(e) {
-      alert('Failed to load initial map data!')
+    .catch((err) => {
+      alert('failed to load initial map data!')
       console.error('/get_map_json failed')
-      console.error(e)
+      console.error(err)
     })
 
   // load images
   imgLoader = new ImageLoader([
+    // pacman
     {
       name: 'pacman_r0',
       src: './assets/pacman/r1.png',
@@ -91,7 +94,32 @@ function load() {
       name: 'pacman_d2',
       src: './assets/pacman/d3.png',
     },
-
+    // ghost
+    {
+      name: 'ghost_red',
+      src: './assets/ghosts/blinky.png',
+    },
+    {
+      name: 'ghost_yellow',
+      src: './assets/ghosts/clyde.png',
+    },
+    {
+      name: 'ghost_cyan',
+      src: './assets/ghosts/inky.png',
+    },
+    {
+      name: 'ghost_pink',
+      src: './assets/ghosts/pinky.png',
+    },
+    {
+      name: 'ghost_scared',
+      src: './assets/ghosts/blue_ghost.png',
+    },
+    {
+      name: 'ghost_eyes',
+      src: './assets/ghosts/eyes.png',
+    },
+    // others
     {
       name: 'wall',
       src: './assets/other/wall.png',
@@ -132,10 +160,8 @@ function init() {
       case 'gate':
         return imgLoader.images.get('gate')
       case 'score':
-        totalScore += 1
         return imgLoader.images.get('score')
       case 'powerup':
-        totalScore += 1
         return imgLoader.images.get('powerup')
       default:
         return null
@@ -154,17 +180,17 @@ function init() {
         grid.set(x, y, 'gate')
         break
       case 3:
+        totalScore += 1
         grid.set(x, y, 'score')
         break
       case 4:
+        totalScore += 1
         grid.set(x, y, 'powerup')
         break
     }
-
-    player.init(12, 22)
   })
 
-  // start game
+  start()
   mainLoop()
 }
 

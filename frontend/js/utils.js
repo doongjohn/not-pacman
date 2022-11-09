@@ -1,4 +1,4 @@
-async function postData(url = '', data = {}) {
+async function postData(url = '', data = {}, signal = null) {
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',
@@ -9,12 +9,13 @@ async function postData(url = '', data = {}) {
     },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
+    signal: signal,
     body: JSON.stringify(data),
   })
   return response
 }
 
-async function getData(url = '') {
+async function getData(url = '', signal = null) {
   const response = await fetch(url, {
     method: 'GET',
     mode: 'cors',
@@ -25,8 +26,29 @@ async function getData(url = '') {
     },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
+    signal: signal,
   })
   return response
+}
+
+class GameEvent {
+  constructor() {
+    // Create a DOM EventTarget object
+    var target = document.createTextNode(null)
+
+    // Pass EventTarget interface calls to DOM EventTarget object
+    this.addEventListener = target.addEventListener.bind(target)
+    this.removeEventListener = target.removeEventListener.bind(target)
+    this.dispatchEvent = target.dispatchEvent.bind(target)
+  }
+}
+
+function randomRange(min, max) {
+  return Math.random() * (max - min) + min
+}
+
+function clamp(num, min, max) {
+  return Math.min(Math.max(num, min), max)
 }
 
 function moveTowards(current, target, maxDelta) {
