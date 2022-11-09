@@ -41,6 +41,9 @@ class Fsm {
   }
 }
 
+// Pac-Man Ghost AI Explained
+// https://www.youtube.com/watch?v=ataGotQ7ir8
+
 // TODO: every 10 score every ghosts enter follow state
 // TODO: ghost will roam for x sec when player is x distance away
 
