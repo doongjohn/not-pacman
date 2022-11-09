@@ -16,7 +16,7 @@ class Fsm {
   }
 
   setState(state) {
-    if (state === undefined || state === null) {
+    if (state == null) {
       return
     }
 
@@ -30,71 +30,38 @@ class Fsm {
   }
 
   update() {
+    // state transition
     const next = this.currentState?.next(this.self)
-    next && this.setState(next)
+    if (next) {
+      this.setState(next)
+    }
+
+    // state update
     this.currentState?.onUpdate(this.self)
   }
 }
 
-function getPath(self, dest, signal = null) {
-  postData(
-    '/get-path-json',
-    {
-      start: {
-        x: self.pos.x,
-        y: self.pos.y,
-      },
-      dest: dest,
-    },
-    signal
-  )
-    .then((response) => response.json())
-    .then((json) => {
-      self.path = json
-      if (self.path.length > 1) {
-        self.path.splice(0, 1) // remove starting position
-      }
-    })
-    .catch((err) => {
-      if (err.name == 'AbortError') {
-        console.log('fetch aborted')
-        return
-      }
-      console.error('/get-path-json')
-      console.error(err)
-    })
-}
+// TODO: every 10 score every ghosts enter follow state
+// TODO: ghost will roam for x sec when player is x distance away
 
-function sortByDist(self) {
-  return function(a, b) {
-    const distA =
-      (player.pos.x - (self.pos.x + a.x)) ** 2 + (player.pos.y - (self.pos.y + a.y)) ** 2
-    const distB =
-      (player.pos.x - (self.pos.x + b.x)) ** 2 + (player.pos.y - (self.pos.y + b.y)) ** 2
-    if (distA > distB) {
-      return -1
-    }
-    if (distA > distB) {
-      return 1
-    }
-    if (distA == distB) {
-      return randomRange(0, 2) == 0 ? -1 : 1
-    }
-  }
-}
-
+// ghost states
+const stateRoam = new State() // TODO: make this
 const stateFollow = new State()
-stateFollow.onExit = (self) => {
-  self.controller.abort()
-  self.path = null
-}
+const stateInBox = new State()
+const stateFrightened = new State()
+const stateEaten = new State()
+
 stateFollow.onEnter = (self) => {
   self.controller = new AbortController()
   self.path = null
 }
+stateFollow.onExit = (self) => {
+  self.controller.abort()
+  self.path = null
+}
 stateFollow.onUpdate = (self) => {
   const needUpdate =
-    self.path === null ||
+    self.path == null ||
     self.path.length == 0 ||
     self.path[self.path.length - 1].x != player.pos.x ||
     self.path[self.path.length - 1].y != player.pos.y
@@ -102,7 +69,7 @@ stateFollow.onUpdate = (self) => {
   const overlapPlayer = self.pos.x == player.pos.x && self.pos.y == player.pos.y
 
   if (needUpdate && !overlapPlayer) {
-    getPath(self, player.pos, self.controller.signal)
+    self.getPath(player.pos, self.controller.signal)
   }
 
   self.followPath(self.followSpeed)
@@ -113,13 +80,12 @@ stateFollow.onUpdate = (self) => {
   }
 }
 
-const stateInBox = new State()
-stateInBox.onExit = (self) => {
-  self.respawnTimer = 0
-}
 stateInBox.onEnter = (self) => {
   self.moveDir.x = 0
   self.moveDir.y = Math.round(randomRange(0, 1)) == 0 ? 1 : -1
+}
+stateInBox.onExit = (self) => {
+  self.respawnTimer = 0
 }
 stateInBox.onUpdate = (self) => {
   if (self.pos.x == self.nextPos.x && self.pos.y == self.nextPos.y) {
@@ -130,18 +96,13 @@ stateInBox.onUpdate = (self) => {
 }
 stateInBox.next = (self) => {
   if (self.isMoveDone() && self.respawnTimer >= randomRange(3, 6)) {
-    return states.follow
+    return stateFollow
   }
 
   return null
 }
 
-const stateScared = new State()
-stateScared.onExit = (self) => {
-  self.scaredTimer = 0
-  self.img = self.imgNormal
-}
-stateScared.onEnter = (self) => {
+stateFrightened.onEnter = (self) => {
   self.img = self.imgScared
   self.moveDir = [
     { x: 1, y: 0 },
@@ -155,9 +116,13 @@ stateScared.onEnter = (self) => {
       }
       return true
     })
-    .sort(sortByDist(self))[0]
+    .sort(self.cmpByDistFar())[0]
 }
-stateScared.onUpdate = (self) => {
+stateFrightened.onExit = (self) => {
+  self.scaredTimer = 0
+  self.img = self.imgNormal
+}
+stateFrightened.onUpdate = (self) => {
   if (self.isMoveDone()) {
     self.moveDir = [
       { x: 1, y: 0 },
@@ -177,39 +142,38 @@ stateScared.onUpdate = (self) => {
         }
         return true
       })
-      .sort(sortByDist(self))[0]
+      .sort(self.cmpByDistFar())[0]
   }
   self.move(self.scaredSpeed)
   self.scaredTimer += deltaTime
 }
-stateScared.next = (self) => {
+stateFrightened.next = (self) => {
   const playerCollide = Math.abs(player.x - self.x) < 10 && Math.abs(player.y - self.y) < 10
   if (playerCollide) {
-    return states.eaten
+    return stateEaten
   }
 
   if (self.isMoveDone() && self.scaredTimer >= 5) {
-    return states.follow
+    return stateFollow
   }
 
   return null
 }
 
-const stateEaten = new State()
+stateEaten.onEnter = (self) => {
+  self.img = self.imgEaten
+  self.path = null
+  self.getPath(self.startPos)
+}
 stateEaten.onExit = (self) => {
   self.img = self.imgNormal
-}
-stateEaten.onEnter = (self) => {
-  self.img = self.imgEyes
-  self.path = null
-  getPath(self, self.startPos)
 }
 stateEaten.onUpdate = (self) => {
   self.followPath(self.eatenSpeed)
 }
 stateEaten.next = (self) => {
   if (self.path !== null && self.path.length == 0) {
-    return states.inBox
+    return stateInBox
   }
 
   return null

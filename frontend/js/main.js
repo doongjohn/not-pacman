@@ -3,10 +3,10 @@ let ghosts = null
 function start() {
   player.init(12, 22)
   ghosts = [
-    new Ghost(ghostColors[0], 12, 14),
-    new Ghost(ghostColors[1], 13, 14),
-    new Ghost(ghostColors[2], 14, 14),
-    new Ghost(ghostColors[3], 15, 14),
+    new Ghost('red', 12, 14),
+    new Ghost('pink', 13, 14),
+    new Ghost('cyan', 14, 14),
+    new Ghost('yellow', 15, 14),
   ]
 }
 
@@ -14,8 +14,6 @@ function mainLoop() {
   // calculate delta time
   deltaTime = (performance.now() - startTime) / 1000
   startTime = performance.now()
-
-  gameTimer += deltaTime
 
   // clear screen
   ctx.clearRect(0, 0, canvas.width, canvas.height)

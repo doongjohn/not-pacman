@@ -94,7 +94,7 @@ const player = {
     this.x = moveTowards(this.x, nextCanvasPos.x, this.speed * deltaTime)
     this.y = moveTowards(this.y, nextCanvasPos.y, this.speed * deltaTime)
 
-    // update position
+    // update grid position
     this.x == nextCanvasPos.x && (this.pos.x = this.nextPos.x)
     this.y == nextCanvasPos.y && (this.pos.y = this.nextPos.y)
   },

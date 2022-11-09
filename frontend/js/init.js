@@ -6,9 +6,8 @@ let grid = null
 let deltaTime = 0
 let startTime = 0
 
-let gameTimer = 0
-let totalScore = 0
 let score = 0
+let totalScore = 0
 let playerDead = false
 
 class ImageLoader {
@@ -140,7 +139,7 @@ function load() {
 }
 
 function init() {
-  if (jsonMapData === null) {
+  if (jsonMapData == null) {
     requestAnimationFrame(init)
     return
   }
