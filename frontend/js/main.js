@@ -35,6 +35,7 @@ function mainLoop() {
     ghost.draw()
   }
 
+  // TODO: draw text
   if (playerDead) {
     console.log('you lose!')
   }

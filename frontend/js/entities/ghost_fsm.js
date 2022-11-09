@@ -1,3 +1,14 @@
+class State {
+  constructor() {
+    this.onEnter = function() {}
+    this.onExit = function() {}
+    this.onUpdate = function() {}
+    this.next = function() {
+      return null
+    }
+  }
+}
+
 class Fsm {
   constructor(self) {
     this.self = self
@@ -9,7 +20,7 @@ class Fsm {
       return
     }
 
-    if (this.currentState && state.name == this.currentState.name) {
+    if (this.currentState == state) {
       return
     }
 
@@ -54,161 +65,154 @@ function getPath(self, dest, signal = null) {
     })
 }
 
-const states = {
-  follow: {
-    onExit: (self) => {
-      self.controller.abort()
-      self.path = []
-    },
-    onEnter: (self) => {
-      self.controller = new AbortController()
-      self.path = []
-    },
-    onUpdate: (self) => {
-      const needUpdate =
-        self.path.length == 0 ||
-        self.path[self.path.length - 1].x != player.gridPos.x ||
-        self.path[self.path.length - 1].y != player.gridPos.y
+function sortByDist(self) {
+  return function(a, b) {
+    const distA =
+      (player.gridPos.x - (self.gridPos.x + a.x)) ** 2 +
+      (player.gridPos.y - (self.gridPos.y + a.y)) ** 2
+    const distB =
+      (player.gridPos.x - (self.gridPos.x + b.x)) ** 2 +
+      (player.gridPos.y - (self.gridPos.y + b.y)) ** 2
+    if (distA > distB) {
+      return -1
+    }
+    if (distA > distB) {
+      return 1
+    }
+    if (distA == distB) {
+      return randomRange(0, 2) == 0 ? -1 : 1
+    }
+  }
+}
 
-      const overlapPlayer = self.gridPos.x == player.gridPos.x && self.gridPos.y == player.gridPos.y
+const stateFollow = new State()
+stateFollow.onExit = (self) => {
+  self.controller.abort()
+  self.path = null
+}
+stateFollow.onEnter = (self) => {
+  self.controller = new AbortController()
+  self.path = null
+}
+stateFollow.onUpdate = (self) => {
+  const needUpdate =
+    self.path === null ||
+    self.path.length == 0 ||
+    self.path[self.path.length - 1].x != player.gridPos.x ||
+    self.path[self.path.length - 1].y != player.gridPos.y
 
-      if (needUpdate && !overlapPlayer) {
-        getPath(self, player.gridPos, self.controller.signal)
+  const overlapPlayer = self.gridPos.x == player.gridPos.x && self.gridPos.y == player.gridPos.y
+
+  if (needUpdate && !overlapPlayer) {
+    getPath(self, player.gridPos, self.controller.signal)
+  }
+
+  self.followPath(self.followSpeed)
+
+  const playerCollide = Math.abs(player.x - self.x) < 10 && Math.abs(player.y - self.y) < 10
+  if (playerCollide) {
+    playerDead = true
+  }
+}
+
+const stateInBox = new State()
+stateInBox.onExit = (self) => {
+  self.respawnTimer = 0
+}
+stateInBox.onEnter = (self) => {
+  self.moveDir.x = 0
+  self.moveDir.y = Math.round(randomRange(0, 1)) == 0 ? 1 : -1
+}
+stateInBox.onUpdate = (self) => {
+  if (self.gridPos.x == self.nextPos.x && self.gridPos.y == self.nextPos.y) {
+    self.moveDir.y *= -1
+  }
+  self.move(self.inBoxSpeed)
+  self.respawnTimer += deltaTime
+}
+stateInBox.next = (self) => {
+  if (self.isMoveDone() && self.respawnTimer >= randomRange(3, 6)) {
+    return states.follow
+  }
+
+  return null
+}
+
+const stateScared = new State()
+stateScared.onExit = (self) => {
+  self.scaredTimer = 0
+  self.img = self.imgNormal
+}
+stateScared.onEnter = (self) => {
+  self.img = self.imgScared
+  self.moveDir = [
+    { x: 1, y: 0 },
+    { x: -1, y: 0 },
+    { x: 0, y: 1 },
+    { x: 0, y: -1 },
+  ]
+    .filter((value) => {
+      if (!self.canMove(self.gridPos, value)) {
+        return false
       }
-
-      self.followPath(self.followSpeed)
-
-      const playerCollide = Math.abs(player.x - self.x) < 10 && Math.abs(player.y - self.y) < 10
-      if (playerCollide) {
-        playerDead = true
-      }
-    },
-    next: (self) => {
-      return null
-    },
-  },
-
-  inBox: {
-    onExit: (self) => {
-      self.respawnTimer = 0
-    },
-    onEnter: (self) => {
-      self.moveDir.x = 0
-      self.moveDir.y = Math.round(randomRange(0, 1)) == 0 ? 1 : -1
-    },
-    onUpdate: (self) => {
-      if (self.gridPos.x == self.nextPos.x && self.gridPos.y == self.nextPos.y) {
-        self.moveDir.y *= -1
-      }
-      self.move(self.inBoxSpeed)
-      self.respawnTimer += deltaTime
-    },
-    next: (self) => {
-      if (self.isModeDone() && self.respawnTimer >= randomRange(3, 6)) {
-        return states.follow
-      }
-
-      return null
-    },
-  },
-
-  scared: {
-    onExit: (self) => {
-      self.scaredTimer = 0
-      self.img = self.imgNormal
-    },
-    onEnter: (self) => {
-      self.img = self.imgScared
-
-      if (Math.round(randomRange(0, 1)) == 0) {
-        self.moveDir.y = 0
-        self.moveDir.x = Math.sign(self.x - player.x)
-        if (self.canMove(self.gridPos, self.moveDir)) {
-          if (self.canMove(self.gridPos, { x: 0, y: 1 })) {
-            self.moveDir.x = 0
-            self.moveDir.y = 1
-          } else if (self.canMove(self.gridPos, { x: 0, y: -1 })) {
-            self.moveDir.x = 0
-            self.moveDir.y = -1
-          }
+      return true
+    })
+    .sort(sortByDist(self))[0]
+}
+stateScared.onUpdate = (self) => {
+  if (self.isMoveDone()) {
+    self.moveDir = [
+      { x: 1, y: 0 },
+      { x: -1, y: 0 },
+      { x: 0, y: 1 },
+      { x: 0, y: -1 },
+    ]
+      .filter((value) => {
+        if (!self.canMove(self.gridPos, value)) {
+          return false
         }
-      } else {
-        self.moveDir.y = Math.sign(self.y - player.y)
-        self.moveDir.x = 0
-        if (self.canMove(self.gridPos, self.moveDir)) {
-          if (self.canMove(self.gridPos, { x: 1, y: 0 })) {
-            self.moveDir.x = 1
-            self.moveDir.y = 0
-          } else if (self.canMove(self.gridPos, { x: -1, y: 0 })) {
-            self.moveDir.x = -1
-            self.moveDir.y = 0
-          }
+        if (self.moveDir.x != 0) {
+          return -self.moveDir.x != value.x
         }
-      }
-    },
-    onUpdate: (self) => {
-      if (self.isModeDone()) {
-        if (Math.round(randomRange(0, 1)) == 0) {
-          self.moveDir.y = 0
-          self.moveDir.x = Math.sign(self.x - player.x)
-          if (self.canMove(self.gridPos, self.moveDir)) {
-            if (self.canMove(self.gridPos, { x: 0, y: 1 })) {
-              self.moveDir.x = 0
-              self.moveDir.y = 1
-            } else if (self.canMove(self.gridPos, { x: 0, y: -1 })) {
-              self.moveDir.x = 0
-              self.moveDir.y = -1
-            }
-          }
-        } else {
-          self.moveDir.y = Math.sign(self.y - player.y)
-          self.moveDir.x = 0
-          if (self.canMove(self.gridPos, self.moveDir)) {
-            if (self.canMove(self.gridPos, { x: 1, y: 0 })) {
-              self.moveDir.x = 1
-              self.moveDir.y = 0
-            } else if (self.canMove(self.gridPos, { x: -1, y: 0 })) {
-              self.moveDir.x = -1
-              self.moveDir.y = 0
-            }
-          }
+        if (self.moveDir.y != 0) {
+          return -self.moveDir.y != value.y
         }
-      }
-      self.move(self.scaredSpeed)
-      self.scaredTimer += deltaTime
-    },
-    next: (self) => {
-      const playerCollide = Math.abs(player.x - self.x) < 10 && Math.abs(player.y - self.y) < 10
-      if (playerCollide) {
-        return states.eaten
-      }
+        return true
+      })
+      .sort(sortByDist(self))[0]
+  }
+  self.move(self.scaredSpeed)
+  self.scaredTimer += deltaTime
+}
+stateScared.next = (self) => {
+  const playerCollide = Math.abs(player.x - self.x) < 10 && Math.abs(player.y - self.y) < 10
+  if (playerCollide) {
+    return states.eaten
+  }
 
-      if (self.isModeDone() && self.scaredTimer >= 5) {
-        return states.follow
-      }
+  if (self.isMoveDone() && self.scaredTimer >= 5) {
+    return states.follow
+  }
 
-      return null
-    },
-  },
+  return null
+}
 
-  eaten: {
-    onExit: (self) => {
-      self.img = self.imgNormal
-    },
-    onEnter: (self) => {
-      self.img = self.imgEyes
-      self.path = null
-      getPath(self, self.startPos)
-    },
-    onUpdate: (self) => {
-      self.followPath(self.eatenSpeed)
-    },
-    next: (self) => {
-      if (self.path !== null && self.path.length == 0) {
-        return states.inBox
-      }
+const stateEaten = new State()
+stateEaten.onExit = (self) => {
+  self.img = self.imgNormal
+}
+stateEaten.onEnter = (self) => {
+  self.img = self.imgEyes
+  self.path = null
+  getPath(self, self.startPos)
+}
+stateEaten.onUpdate = (self) => {
+  self.followPath(self.eatenSpeed)
+}
+stateEaten.next = (self) => {
+  if (self.path !== null && self.path.length == 0) {
+    return states.inBox
+  }
 
-      return null
-    },
-  },
+  return null
 }

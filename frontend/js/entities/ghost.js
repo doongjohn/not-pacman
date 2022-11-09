@@ -22,7 +22,7 @@ class Ghost {
 
     // path
     this.controller = new AbortController()
-    this.path = []
+    this.path = null
 
     // canvas positoin
     const { x, y } = grid.gridToCanvasPos(startX, startY)
@@ -45,11 +45,11 @@ class Ghost {
 
     // fsm
     this.fsm = new Fsm(this)
-    this.fsm.setState(states.inBox)
+    this.fsm.setState(stateInBox)
 
     // events
     player.event.addEventListener('powerup', () => {
-      this.fsm.setState(states.scared)
+      this.fsm.setState(stateScared)
     })
   }
 
@@ -57,8 +57,8 @@ class Ghost {
     this.fsm.update()
   }
 
-  getTile() {
-    return grid.at(this.gridPos.x, this.gridPos.y)
+  isMoveDone() {
+    return this.gridPos.x == this.nextPos.x && this.gridPos.y == this.nextPos.y
   }
 
   canMove(pos, dir) {
@@ -82,10 +82,6 @@ class Ghost {
     // update position
     this.x == nextCanvasPos.x && (this.gridPos.x = this.nextPos.x)
     this.y == nextCanvasPos.y && (this.gridPos.y = this.nextPos.y)
-  }
-
-  isModeDone() {
-    return this.gridPos.x == this.nextPos.x && this.gridPos.y == this.nextPos.y
   }
 
   followPath(speed) {

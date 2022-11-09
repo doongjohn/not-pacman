@@ -4,16 +4,6 @@
 #include "game_data.hpp"
 #include "server.hpp"
 
-// TODO: create websocket server
-// TODO: create web frontend
-//   - [x] load map data from the http server
-//   - [x] character movement
-//   - [x] character & tile collision
-//   - [ ] character & ghost collision
-//   - [ ] character respawn
-//   - [ ] ghost state machine
-//   - [ ] game over
-
 auto main() -> int {
   GameData game_data(28, 31);
 
@@ -34,7 +24,7 @@ auto main() -> int {
     "######.##          ##.######",
     "######.## ###--### ##.######",
     "######.## #      # ##.######",
-    "#........ #      # ........#",
+    "#@....... #      # .......@#",
     "######.## #      # ##.######",
     "######.## ######## ##.######",
     "######.##          ##.######",
