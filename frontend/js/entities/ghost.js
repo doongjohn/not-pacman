@@ -87,7 +87,7 @@ class Ghost {
 
   move(speed) {
     // check wall for input direction
-    if (this.canMove(this.pos, this.moveDir)) {
+    if (this.isMoveDone() && this.canMove(this.pos, this.moveDir)) {
       this.nextPos.x = this.pos.x + this.moveDir.x
       this.nextPos.y = this.pos.y + this.moveDir.y
     }
@@ -111,15 +111,9 @@ class Ghost {
       return
     }
 
-    // update move dir
-    if (this.isMoveDone()) {
-      this.moveDir.x = this.path[0].x - this.pos.x
-      this.moveDir.y = this.path[0].y - this.pos.y
-    }
-
     // update next pos
-    this.nextPos.x = this.pos.x + this.moveDir.x
-    this.nextPos.y = this.pos.y + this.moveDir.y
+    this.nextPos.x = this.path[0].x
+    this.nextPos.y = this.path[0].y
 
     // move
     const nextCanvasPos = grid.gridToCanvasPos(this.nextPos.x, this.nextPos.y)

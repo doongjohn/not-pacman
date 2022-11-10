@@ -144,6 +144,10 @@ stateInBox.next = (self) => {
   if (self.isMoveDone() && self.respawnTimer >= randomRange(3, 6)) {
     return stateFollow
   }
+
+  if (Math.abs(player.pos.x - self.pos.x) < 3 || Math.abs(player.pos.y - self.pos.y) < 3) {
+    return stateFollow
+  }
 }
 
 stateFrightened.onEnter = (self) => {
@@ -178,13 +182,6 @@ stateFrightened.onUpdate = (self) => {
         if (!self.canMove(self.pos, value)) {
           return false
         }
-        // NOTE: this makes ghost unable to turn
-        // if (self.moveDir.x != 0) {
-        //   return -self.moveDir.x != value.x
-        // }
-        // if (self.moveDir.y != 0) {
-        //   return -self.moveDir.y != value.y
-        // }
         return true
       })
       .sort(self.cmpByDistFar())[0]
