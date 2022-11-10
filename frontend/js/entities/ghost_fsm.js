@@ -3,9 +3,7 @@ class State {
     this.onEnter = function() {}
     this.onExit = function() {}
     this.onUpdate = function() {}
-    this.next = function() {
-      return null
-    }
+    this.next = function() {}
   }
 }
 
@@ -59,7 +57,7 @@ stateRoam.onExit = (self) => {
 }
 stateRoam.onUpdate = (self) => {
   if (self.isMoveDone()) {
-    self.moveDir = [
+    let dir = [
       { x: 1, y: 0 },
       { x: -1, y: 0 },
       { x: 0, y: 1 },
@@ -78,6 +76,10 @@ stateRoam.onUpdate = (self) => {
         return true
       })
       .sort(() => randomRange(-1, 1))[0]
+
+    if (dir != null) {
+      self.moveDir = dir
+    }
   }
 
   self.move(self.followSpeed)
@@ -85,7 +87,7 @@ stateRoam.onUpdate = (self) => {
 stateRoam.next = (self) => {
   self.roamTimer += deltaTime
 
-  if (self.roamTimer >= self.roamTime) {
+  if (self.isMoveDone() && self.roamTimer >= self.roamTime) {
     return stateFollow
   }
 }
@@ -114,16 +116,11 @@ stateFollow.onUpdate = (self) => {
   }
 
   self.followPath(self.followSpeed)
-
-  const playerCollide = Math.abs(player.x - self.x) < 10 && Math.abs(player.y - self.y) < 10
-  if (playerCollide) {
-    playerDead = true
-  }
 }
 stateFollow.next = (self) => {
   self.followTimer += deltaTime
 
-  if (self.followTimer >= self.followTime) {
+  if (self.isMoveDone() && self.followTimer >= self.followTime) {
     return stateRoam
   }
 }
@@ -136,7 +133,7 @@ stateInBox.onExit = (self) => {
   self.respawnTimer = 0
 }
 stateInBox.onUpdate = (self) => {
-  if (self.pos.x == self.nextPos.x && self.pos.y == self.nextPos.y) {
+  if (self.isMoveDone()) {
     self.moveDir.y *= -1
   }
   self.move(self.inBoxSpeed)
@@ -181,12 +178,13 @@ stateFrightened.onUpdate = (self) => {
         if (!self.canMove(self.pos, value)) {
           return false
         }
-        if (self.moveDir.x != 0) {
-          return -self.moveDir.x != value.x
-        }
-        if (self.moveDir.y != 0) {
-          return -self.moveDir.y != value.y
-        }
+        // NOTE: this makes ghost unable to turn
+        // if (self.moveDir.x != 0) {
+        //   return -self.moveDir.x != value.x
+        // }
+        // if (self.moveDir.y != 0) {
+        //   return -self.moveDir.y != value.y
+        // }
         return true
       })
       .sort(self.cmpByDistFar())[0]

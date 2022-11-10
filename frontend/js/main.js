@@ -33,13 +33,24 @@ function mainLoop() {
     ghost.draw()
   }
 
-  // TODO: draw text
+  // score text
+  ctx.fillStyle = '#ffffff'
+  ctx.font = '60px "Hunter"'
+  ctx.textAlign = 'left'
+  ctx.fillText('SCORE: ' + score, 20, 70)
+
   if (playerDead) {
-    console.log('you lose!')
+    ctx.fillStyle = '#fff700'
+    ctx.font = '100px "Hunter"'
+    ctx.textAlign = 'center'
+    ctx.fillText('YOU DIED!', canvas.width / 2, canvas.height / 2)
   }
 
   if (score == totalScore) {
-    console.log('you win!')
+    ctx.fillStyle = '#fff700'
+    ctx.font = '100px "Hunter"'
+    ctx.textAlign = 'center'
+    ctx.fillText('YOU WIN!', canvas.width / 2, canvas.height / 2)
   }
 
   requestAnimationFrame(mainLoop)

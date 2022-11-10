@@ -115,7 +115,7 @@ const player = {
     }
 
     this.time += deltaTime
-    if (this.time >= 0.1) {
+    if (this.time >= 0.05) {
       // animation
       this.time = 0
       this.spriteIndex = (this.spriteIndex + 1) % this.spriteSheet.length

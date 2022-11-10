@@ -65,6 +65,14 @@ class Ghost {
 
   update() {
     this.fsm.update()
+
+    // kill player
+    if (![stateFrightened, stateEaten].includes(this.fsm.currentState)) {
+      const playerCollide = Math.abs(player.x - this.x) < 10 && Math.abs(player.y - this.y) < 10
+      if (playerCollide) {
+        playerDead = true
+      }
+    }
   }
 
   isMoveDone() {
@@ -103,24 +111,27 @@ class Ghost {
       return
     }
 
-    // update next pos
-    this.nextPos.x = this.path[0].x
-    this.nextPos.y = this.path[0].y
-
     // update move dir
-    this.moveDir.x = this.nextPos.x - this.pos.x
-    this.moveDir.y = this.nextPos.y - this.pos.y
+    if (this.isMoveDone()) {
+      this.moveDir.x = this.path[0].x - this.pos.x
+      this.moveDir.y = this.path[0].y - this.pos.y
+    }
+
+    // update next pos
+    this.nextPos.x = this.pos.x + this.moveDir.x
+    this.nextPos.y = this.pos.y + this.moveDir.y
 
     // move
     const nextCanvasPos = grid.gridToCanvasPos(this.nextPos.x, this.nextPos.y)
     this.x = moveTowards(this.x, nextCanvasPos.x, speed * deltaTime)
     this.y = moveTowards(this.y, nextCanvasPos.y, speed * deltaTime)
 
-    // update position
+    // update grid position
     this.x == nextCanvasPos.x && (this.pos.x = this.nextPos.x)
     this.y == nextCanvasPos.y && (this.pos.y = this.nextPos.y)
 
-    if (this.x == nextCanvasPos.x && this.y == nextCanvasPos.y) {
+    // remove path
+    if (this.isMoveDone() && this.x == nextCanvasPos.x && this.y == nextCanvasPos.y) {
       this.path.splice(0, 1)
     }
   }
