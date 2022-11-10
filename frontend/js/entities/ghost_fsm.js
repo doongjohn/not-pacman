@@ -43,11 +43,36 @@ class Fsm {
 // https://www.youtube.com/watch?v=ataGotQ7ir8
 
 // ghost states
+const stateInBox = new State()
 const stateRoam = new State()
 const stateFollow = new State()
-const stateInBox = new State()
 const stateFrightened = new State()
 const stateEaten = new State()
+
+stateInBox.onEnter = (self) => {
+  self.moveDir.x = 0
+  self.moveDir.y = Math.round(randomRange(0, 1)) == 0 ? 1 : -1
+}
+stateInBox.onExit = (self) => {
+  self.respawnTimer = 0
+}
+stateInBox.onUpdate = (self) => {
+  if (self.isMoveDone()) {
+    self.moveDir.y *= -1
+  }
+  self.move(self.inBoxSpeed)
+}
+stateInBox.next = (self) => {
+  self.respawnTimer += deltaTime
+
+  if (self.isMoveDone() && self.respawnTimer >= randomRange(3, 6)) {
+    return stateFollow
+  }
+
+  if (Math.abs(player.pos.x - self.pos.x) < 3 || Math.abs(player.pos.y - self.pos.y) < 3) {
+    return stateFollow
+  }
+}
 
 stateRoam.onEnter = (self) => {
   self.roamTime = randomRange(2, 3)
@@ -122,31 +147,6 @@ stateFollow.next = (self) => {
 
   if (self.isMoveDone() && self.followTimer >= self.followTime) {
     return stateRoam
-  }
-}
-
-stateInBox.onEnter = (self) => {
-  self.moveDir.x = 0
-  self.moveDir.y = Math.round(randomRange(0, 1)) == 0 ? 1 : -1
-}
-stateInBox.onExit = (self) => {
-  self.respawnTimer = 0
-}
-stateInBox.onUpdate = (self) => {
-  if (self.isMoveDone()) {
-    self.moveDir.y *= -1
-  }
-  self.move(self.inBoxSpeed)
-}
-stateInBox.next = (self) => {
-  self.respawnTimer += deltaTime
-
-  if (self.isMoveDone() && self.respawnTimer >= randomRange(3, 6)) {
-    return stateFollow
-  }
-
-  if (Math.abs(player.pos.x - self.pos.x) < 3 || Math.abs(player.pos.y - self.pos.y) < 3) {
-    return stateFollow
   }
 }
 

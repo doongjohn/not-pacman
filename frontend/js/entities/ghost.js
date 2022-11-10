@@ -115,6 +115,10 @@ class Ghost {
     this.nextPos.x = this.path[0].x
     this.nextPos.y = this.path[0].y
 
+    // update move dir
+    this.moveDir.x = this.nextPos.x - this.pos.x
+    this.moveDir.y = this.nextPos.y - this.pos.y
+
     // move
     const nextCanvasPos = grid.gridToCanvasPos(this.nextPos.x, this.nextPos.y)
     this.x = moveTowards(this.x, nextCanvasPos.x, speed * deltaTime)
