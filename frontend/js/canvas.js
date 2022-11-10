@@ -2,6 +2,10 @@ const canvasContainer = document.getElementById('canvas-container')
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 ctx.imageSmoothingEnabled = false
+ctx.webkitImageSmoothingEnabled = false
+ctx.mozImageSmoothingEnabled = false
+ctx.oImageSmoothingEnabled = false
+ctx.msImageSmoothingEnabled = false
 
 canvas.style.background = '#242424'
 canvas.width = canvasContainer.offsetWidth

@@ -16,7 +16,14 @@ body {
 }
 
 canvas {
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -o-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
   image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
   position: absolute;
   display: block;
   padding: 0;

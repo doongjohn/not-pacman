@@ -50,7 +50,7 @@ const stateFrightened = new State()
 const stateEaten = new State()
 
 stateRoam.onEnter = (self) => {
-  self.roamTime = randomRange(2, 4)
+  self.roamTime = randomRange(2, 3)
 }
 stateRoam.onExit = (self) => {
   self.roamTimer = 0
@@ -152,19 +152,27 @@ stateInBox.next = (self) => {
 
 stateFrightened.onEnter = (self) => {
   self.img = self.imgScared
-  self.moveDir = [
-    { x: 1, y: 0 },
-    { x: -1, y: 0 },
-    { x: 0, y: 1 },
-    { x: 0, y: -1 },
-  ]
-    .filter((value) => {
-      if (!self.canMove(self.pos, value)) {
-        return false
-      }
-      return true
-    })
-    .sort(self.cmpByDistFar())[0]
+  if (!self.isMoveDone()) {
+    if (self.moveDir.x != 0) {
+      self.moveDir.x = Math.sign(self.x - player.x)
+    } else {
+      self.moveDir.y = Math.sign(self.y - player.y)
+    }
+  } else {
+    self.moveDir = [
+      { x: 1, y: 0 },
+      { x: -1, y: 0 },
+      { x: 0, y: 1 },
+      { x: 0, y: -1 },
+    ]
+      .filter((value) => {
+        if (!self.canMove(self.pos, value)) {
+          return false
+        }
+        return true
+      })
+      .sort(self.cmpByDistFar())[0]
+  }
 }
 stateFrightened.onExit = (self) => {
   self.frightenedTimer = 0
