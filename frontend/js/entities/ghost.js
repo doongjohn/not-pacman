@@ -27,13 +27,25 @@ class Ghost {
     this.x = x
     this.y = y
 
-    // properties
+    // roam
+    this.roamTime = 0
+    this.roamTimer = 0
+
+    // follow
     this.followSpeed = 100
+    this.followTime = 0
+    this.followTimer = 0
+
+    // in box
     this.inBoxSpeed = 50
-    this.scaredSpeed = 50
+
+    // frightened
+    this.frightenedSpeed = 50
+    this.frightenedTimer = 0
+
+    // eaten
     this.eatenSpeed = 300
     this.respawnTimer = 0
-    this.scaredTimer = 0
 
     // images
     this.imgNormal = imgLoader.images.get('ghost_' + color)
@@ -91,8 +103,13 @@ class Ghost {
       return
     }
 
+    // update next pos
     this.nextPos.x = this.path[0].x
     this.nextPos.y = this.path[0].y
+
+    // update move dir
+    this.moveDir.x = this.nextPos.x - this.pos.x
+    this.moveDir.y = this.nextPos.y - this.pos.y
 
     // move
     const nextCanvasPos = grid.gridToCanvasPos(this.nextPos.x, this.nextPos.y)
