@@ -69,7 +69,7 @@ stateInBox.next = (self) => {
     return stateFollow
   }
 
-  if (Math.abs(player.pos.x - self.pos.x) < 3 || Math.abs(player.pos.y - self.pos.y) < 3) {
+  if (Math.abs(player.pos.x - self.pos.x) < 3 && Math.abs(player.pos.y - self.pos.y) < 3) {
     return stateFollow
   }
 }
