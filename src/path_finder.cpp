@@ -15,33 +15,6 @@ auto PathFinder::get_neighbors(Point pos) -> Neighbors {
     result.weights[i] = straight_path_cost;
   }
 
-  result.nodes[4] = Node(-1, -1);
-  result.nodes[5] = Node(-1, -1);
-  result.nodes[6] = Node(-1, -1);
-  result.nodes[7] = Node(-1, -1);
-
-  // check blocked corner
-  // if ((is_in_bounds(result.nodes[0].pos) && game_map.get_walkable(result.nodes[0].pos)) ||
-  //     (is_in_bounds(result.nodes[2].pos) && game_map.get_walkable(result.nodes[2].pos))) {
-  //   result.nodes[4] = Node(pos.x + 1, pos.y + 1);
-  // }
-  // if ((is_in_bounds(result.nodes[0].pos) && game_map.get_walkable(result.nodes[0].pos)) ||
-  //     (is_in_bounds(result.nodes[3].pos) && game_map.get_walkable(result.nodes[3].pos))) {
-  //   result.nodes[5] = Node(pos.x + 1, pos.y - 1);
-  // }
-  // if ((is_in_bounds(result.nodes[1].pos) && game_map.get_walkable(result.nodes[1].pos)) ||
-  //     (is_in_bounds(result.nodes[2].pos) && game_map.get_walkable(result.nodes[2].pos))) {
-  //   result.nodes[6] = Node(pos.x - 1, pos.y + 1);
-  // }
-  // if ((is_in_bounds(result.nodes[1].pos) && game_map.get_walkable(result.nodes[1].pos)) ||
-  //     (is_in_bounds(result.nodes[3].pos) && game_map.get_walkable(result.nodes[3].pos))) {
-  //   result.nodes[7] = Node(pos.x - 1, pos.y - 1);
-  // }
-
-  // for (int i = 4; i <= 7; ++i) {
-  //   result.weights[i] = diagonal_path_cost;
-  // }
-
   return result;
 }
 

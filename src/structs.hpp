@@ -125,6 +125,6 @@ struct Node {
 };
 
 struct Neighbors {
-  std::array<Node, 8> nodes;
-  std::array<int, 8> weights;
+  std::array<Node, 4> nodes;
+  std::array<int, 4> weights;
 };
