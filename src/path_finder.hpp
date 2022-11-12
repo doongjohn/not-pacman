@@ -1,10 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <queue>
 #include <vector>
-#include <unordered_map>
-#include <unordered_set>
 #include <functional>
 
 #include "game_map.hpp"
@@ -22,13 +19,10 @@ public:
   PathFinder(GameMap &map) : game_map(map) {}
 
   auto is_in_bounds(Point pos) -> bool;
-  auto get_neighbors(Point pos) -> Neighbors;
 
   auto dijkstra_base(Point start, Point dest, std::function<int(Point, Point)> heuristic_fn) -> std::vector<Point>;
   auto dijkstra(Point start, Point dest) -> std::vector<Point>;
   auto astar(Point start, Point dest) -> std::vector<Point>;
-
-  auto print_path(std::vector<Point> path) -> void;
 };
 
 namespace heuristic {

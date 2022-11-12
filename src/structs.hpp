@@ -80,8 +80,22 @@ struct Array2D {
     delete[] data;
   }
 
+  T &at(int x, int y) {
+    return data[y][x];
+  }
   T &at(Point pos) {
     return data[pos.y][pos.x];
+  }
+  T *at_ptr(Point pos) {
+    return &data[pos.y][pos.x];
+  }
+
+  void for_each(std::function<void(int x, int y)> cb) {
+    for (int y = 0; y < height; ++y) {
+      for (int x = 0; x < width; ++x) {
+        cb(x, y);
+      }
+    }
   }
 
   void set_all(T value) {
@@ -100,9 +114,7 @@ struct Node {
 
   Node() : pos(-1, -1), parent_pos(-1, -1), cost(INT32_MAX) {}
   Node(int x, int y) : pos(x, y), parent_pos(-1, -1), cost(INT32_MAX) {}
-  Node(const Node &other)
-    : pos(other.pos),
-      parent_pos(other.parent_pos) {
+  Node(const Node &other) : pos(other.pos), parent_pos(other.parent_pos) {
     this->cost = other.cost;
   }
 
@@ -120,7 +132,25 @@ struct Node {
   }
 };
 
-struct Neighbors {
-  std::array<Node, 4> nodes;
-  std::array<int, 4> weights;
+struct NodeRef {
+  Node *ptr;
+
+  NodeRef(Node *ptr) : ptr(ptr) {}
+
+  inline Node &get() const {
+    return *ptr;
+  }
+
+  friend bool operator>(const NodeRef &a, const NodeRef &b) {
+    return a.get().cost > b.get().cost;
+  }
+  friend bool operator<(const NodeRef &a, const NodeRef &b) {
+    return a.get().cost < b.get().cost;
+  }
+  friend bool operator>=(const NodeRef &a, const NodeRef &b) {
+    return a.get().cost >= b.get().cost;
+  }
+  friend bool operator<=(const NodeRef &a, const NodeRef &b) {
+    return a.get().cost <= b.get().cost;
+  }
 };
