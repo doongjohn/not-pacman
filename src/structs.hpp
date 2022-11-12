@@ -45,16 +45,12 @@ struct Point {
   }
 };
 
-namespace std {
-
 template <>
-struct hash<Point> {
+struct std::hash<Point> {
   auto operator()(const Point &value) const -> size_t {
     return hash<std::string>()(string_format("%d,%d", value.x, value.y));
   }
 };
-
-} // namespace std
 
 static void to_json(nlohmann::json &j, const Point &value) {
   j = nlohmann::json{{"x", value.x}, {"y", value.y}};
