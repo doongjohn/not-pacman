@@ -9,7 +9,7 @@
 
 // source: https://stackoverflow.com/a/26221725
 template <typename... Args>
-std::string string_format(const std::string &format, Args... args) {
+auto string_format(const std::string &format, Args... args) -> std::string {
   int size_s = std::snprintf(nullptr, 0, format.c_str(), args...) + 1; // Extra space for '\0'
   if (size_s <= 0) {
     throw std::runtime_error("Error during formatting.");
@@ -37,10 +37,10 @@ struct Point {
     this->y = other.y;
   }
 
-  friend bool operator == (const Point &a, const Point &b) {
+  friend auto operator == (const Point &a, const Point &b) -> bool {
     return a.x == b.x && a.y == b.y;
   }
-  friend bool operator != (const Point &a, const Point &b) {
+  friend auto operator != (const Point &a, const Point &b) -> bool {
     return a.x != b.x || a.y != b.y;
   }
 };
@@ -52,10 +52,10 @@ struct std::hash<Point> {
   }
 };
 
-static void to_json(nlohmann::json &j, const Point &value) {
+static auto to_json(nlohmann::json &j, const Point &value) -> void {
   j = nlohmann::json{{"x", value.x}, {"y", value.y}};
 }
-static void from_json(const nlohmann::json &j, Point &value) {
+static auto from_json(const nlohmann::json &j, Point &value) -> void {
   j.at("x").get_to(value.x);
   j.at("y").get_to(value.y);
 }
@@ -80,17 +80,17 @@ struct Array2D {
     delete[] data;
   }
 
-  T &at(int x, int y) {
+  auto at(int x, int y) -> T& {
     return data[y][x];
   }
-  T &at(Point pos) {
+  auto at(Point pos) -> T& {
     return data[pos.y][pos.x];
   }
-  T *at_ptr(Point pos) {
+  auto at_ptr(Point pos) -> T* {
     return &data[pos.y][pos.x];
   }
 
-  void for_each(std::function<void(int x, int y)> cb) {
+  auto for_each(std::function<void(int x, int y)> cb) -> void {
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
         cb(x, y);
@@ -98,7 +98,7 @@ struct Array2D {
     }
   }
 
-  void set_all(T value) {
+  auto set_all(T value) -> void {
     for (int h = 0; h < height; ++h) {
       for (int w = 0; w < width; ++w) {
         data[h][w] = value;
@@ -118,16 +118,16 @@ struct Node {
     this->cost = other.cost;
   }
 
-  friend bool operator > (const Node &a, const Node &b) {
+  friend auto operator > (const Node &a, const Node &b) -> bool {
     return a.cost > b.cost;
   }
-  friend bool operator < (const Node &a, const Node &b) {
+  friend auto operator < (const Node &a, const Node &b) -> bool {
     return a.cost < b.cost;
   }
-  friend bool operator >= (const Node &a, const Node &b) {
+  friend auto operator >= (const Node &a, const Node &b) -> bool {
     return a.cost >= b.cost;
   }
-  friend bool operator <= (const Node &a, const Node &b) {
+  friend auto operator <= (const Node &a, const Node &b) -> bool {
     return a.cost <= b.cost;
   }
 };
@@ -137,20 +137,20 @@ struct NodeRef {
 
   NodeRef(Node *ptr) : ptr(ptr) {}
 
-  inline Node &get() const {
+  inline auto get() const -> Node& {
     return *ptr;
   }
 
-  friend bool operator>(const NodeRef &a, const NodeRef &b) {
+  friend auto operator>(const NodeRef &a, const NodeRef &b) -> bool {
     return a.get().cost > b.get().cost;
   }
-  friend bool operator<(const NodeRef &a, const NodeRef &b) {
+  friend auto operator<(const NodeRef &a, const NodeRef &b) -> bool {
     return a.get().cost < b.get().cost;
   }
-  friend bool operator>=(const NodeRef &a, const NodeRef &b) {
+  friend auto operator>=(const NodeRef &a, const NodeRef &b) -> bool {
     return a.get().cost >= b.get().cost;
   }
-  friend bool operator<=(const NodeRef &a, const NodeRef &b) {
+  friend auto operator<=(const NodeRef &a, const NodeRef &b) -> bool {
     return a.get().cost <= b.get().cost;
   }
 };

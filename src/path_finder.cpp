@@ -4,13 +4,6 @@ auto PathFinder::is_in_bounds(Point pos) -> bool {
   return pos.x >= 0 && pos.y >= 0 && pos.x < game_map.width && pos.y < game_map.height;
 }
 
-const std::vector<Point> neighbor_offsets{
-  {+1, +0},
-  {-1, +0},
-  {+0, +1},
-  {+0, -1},
-};
-
 auto PathFinder::dijkstra_base(Point start, Point dest, std::function<int(Point, Point)> heuristic_fn) -> std::vector<Point> {
   // check out of bounds
   if (!is_in_bounds(start) || !is_in_bounds(dest)) {
@@ -63,6 +56,12 @@ auto PathFinder::dijkstra_base(Point start, Point dest, std::function<int(Point,
     }
 
     // update neighbors
+    const std::vector<Point> neighbor_offsets{
+        {+1, +0},
+        {-1, +0},
+        {+0, +1},
+        {+0, -1},
+    };
     for (int i = 0; i < 4; ++i) {
       const Point offset = neighbor_offsets[i];
       const Point neighbor_pos{

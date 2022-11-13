@@ -1,12 +1,14 @@
 #pragma once
 
-#include <httplib.h>
 #include <iostream>
+
+#include <httplib.h>
 
 #include "game_data.hpp"
 
 auto start_http_server(GameData &data) -> void {
   using namespace httplib;
+  using namespace nlohmann;
 
   Server svr;
   if (!svr.set_mount_point("/", "./frontend")) {
@@ -19,11 +21,11 @@ auto start_http_server(GameData &data) -> void {
   });
 
   svr.Post("/get-path-json", [&](const Request &req, Response &res) {
-    nlohmann::json json_req = nlohmann::json::parse(req.body);
+    json json_req = json::parse(req.body);
     const Point start = json_req["start"];
     const Point dest = json_req["dest"];
 
-    nlohmann::json path = data.path_finder.astar(start, dest);
+    json path = data.path_finder.astar(start, dest);
     res.set_content(path.dump(), "application/json");
   });
 
