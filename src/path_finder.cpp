@@ -116,5 +116,5 @@ auto PathFinder::dijkstra(Point start, Point dest) -> std::vector<Point> {
 }
 
 auto PathFinder::astar(Point start, Point dest) -> std::vector<Point> {
-  return dijkstra_base(start, dest, heuristic::diagonal_distance);
+  return dijkstra_base(start, dest, heuristic::manhattan_distance);
 }

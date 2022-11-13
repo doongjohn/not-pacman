@@ -27,19 +27,26 @@ public:
 
 namespace heuristic {
 
-// this is for dijkstra
+// A*’s Use of the Heuristic:
+// http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+
 static auto none(Point cur, Point dest) -> int {
   return 0;
 }
 
-// A*’s Use of the Heuristic:
-// http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 static auto diagonal_distance(Point cur, Point dest) -> int {
-    const int dx = abs(cur.x - dest.x);
-    const int dy = abs(cur.y - dest.y);
-    constexpr const int D = PathFinder::straight_path_cost;
-    constexpr const int D2 = PathFinder::diagonal_path_cost;
-    return D * (dx + dy) + (D2 - 2 * D) * std::min(dx, dy);
-  }
+  const int dx = abs(cur.x - dest.x);
+  const int dy = abs(cur.y - dest.y);
+  constexpr const int D = PathFinder::straight_path_cost;
+  constexpr const int D2 = PathFinder::diagonal_path_cost;
+  return D * (dx + dy) + (D2 - 2 * D) * std::min(dx, dy);
+}
+
+static auto manhattan_distance(Point cur, Point dest) -> int {
+  const int dx = abs(cur.x - dest.x);
+  const int dy = abs(cur.y - dest.y);
+  constexpr const int D = PathFinder::straight_path_cost;
+  return D * (dx + dy);
+}
 
 } // namespace heuristic
